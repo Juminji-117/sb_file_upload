@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: dev, base-addi
+  thymeleaf:
+    cache: false
+    prefix: file:src/main/resources/templates/
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3306/uf?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul
+    username: user2
+    password: test1234
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+custom:
+  genFileDirPath: C:\IntelliJ_uploadedfile_temp
