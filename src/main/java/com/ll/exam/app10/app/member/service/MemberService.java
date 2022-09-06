@@ -34,7 +34,7 @@ public class MemberService {
 
         try {
             // 입력받은 이미지를 아까 새로 만든 .png 이미지파일로 넘김김
-           profileImg.transferTo(profileImgFile);
+            profileImg.transferTo(profileImgFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -52,5 +52,9 @@ public class MemberService {
         memberRepository.save(member);
 
         return member;
+    }
+
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id).orElse(null);
     }
 }

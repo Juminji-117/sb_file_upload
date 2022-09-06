@@ -4,6 +4,7 @@ import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +42,7 @@ public class MemberController {
     }
 
     @GetMapping("/profile")
-    public String showProfile(HttpSession session) {
+    public String showProfile(HttpSession session, Model model) {
         // 세션으로 로그인 체크
         Long loginedMemberId = (Long) session.getAttribute("loginedMemberId");
         boolean isLogined = loginedMemberId != null;
@@ -49,6 +50,11 @@ public class MemberController {
         if (isLogined == false) {
             return "redirect:/?errorMsg=Need to login!";
         }
+
+        // 아이디로 회원 리턴하여 model에 담아 넘겨줌
+        Member loginedMember = memberService.getMemberById(loginedMemberId);
+
+        model.addAttribute("loginedMember", loginedMember);
 
         // 로그인 되어 있으면 페이지 리턴
         return "member/profile";
