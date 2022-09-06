@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -21,17 +23,34 @@ public class MemberController {
         return "member/join";
     }
 
+    // HttpSession session를 인수로 넣으면 세션 바로 접근 가능
     @PostMapping("/join")
     @ResponseBody
-    public String join(String username, String password, String email, MultipartFile profileImg) { // 이미지 입력받을 때는 String말고 MultipartFile 타입으로!
+    public String join(String username, String password, String email, MultipartFile profileImg, HttpSession session) {
         Member oldMember = memberService.getMemberByUsername(username);
 
         if (oldMember != null) {
-            return "이미 가입된 회원입니다.";
+            return "redirect:/?errorMsg=Already done.";
         }
 
         Member member = memberService.join(username, "{noop}" + password, email, profileImg);
 
-        return "가입완료";
+        session.setAttribute("loginedMemberId", member.getId()); // 세션에 로그인  정보 저장 == 세션으로 로그인 처리
+
+        return "redirect:/member/profile";
+    }
+
+    @GetMapping("/profile")
+    public String showProfile(HttpSession session) {
+        // 세션으로 로그인 체크
+        Long loginedMemberId = (Long) session.getAttribute("loginedMemberId");
+        boolean isLogined = loginedMemberId != null;
+
+        if (isLogined == false) {
+            return "redirect:/?errorMsg=Need to login!";
+        }
+
+        // 로그인 되어 있으면 페이지 리턴
+        return "member/profile";
     }
 }
