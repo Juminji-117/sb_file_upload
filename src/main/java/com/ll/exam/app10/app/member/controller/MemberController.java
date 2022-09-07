@@ -3,6 +3,8 @@ package com.ll.exam.app10.app.member.controller;
 import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
+
 
     @GetMapping("/join")
     public String showJoin() {
@@ -27,32 +34,31 @@ public class MemberController {
     // HttpSession session를 인수로 넣으면 세션 바로 접근 가능
     @PostMapping("/join")
     @ResponseBody
-    public String join(String username, String password, String email, MultipartFile profileImg, HttpSession session) {
+    public String join(HttpServletRequest req, String username, String password, String email, MultipartFile profileImg) {
         Member oldMember = memberService.getMemberByUsername(username);
+
+        String passwordClearText = password;
+        password = passwordEncoder.encode(password);
 
         if (oldMember != null) {
             return "redirect:/?errorMsg=Already done.";
         }
 
-        Member member = memberService.join(username, "{noop}" + password, email, profileImg);
+        Member member = memberService.join(username, password, email, profileImg);
 
-        session.setAttribute("loginedMemberId", member.getId()); // 세션에 로그인  정보 저장 == 세션으로 로그인 처리
+        try {
+            req.login(username, passwordClearText);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        }
 
         return "redirect:/member/profile";
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/profile")
-    public String showProfile(HttpSession session, Model model) {
-        // 세션으로 로그인 체크
-        Long loginedMemberId = (Long) session.getAttribute("loginedMemberId");
-        boolean isLogined = loginedMemberId != null;
-
-        if (isLogined == false) {
-            return "redirect:/?errorMsg=Need to login!";
-        }
-
-        // 아이디로 회원 리턴하여 model에 담아 넘겨줌
-        Member loginedMember = memberService.getMemberById(loginedMemberId);
+    public String showProfile(Principal principal, Model model) {
+        Member loginedMember = memberService.getMemberByUsername(principal.getName());
 
         model.addAttribute("loginedMember", loginedMember);
 
