@@ -75,4 +75,21 @@ public class MemberService implements UserDetailsService {
 
         return new User(member.getUsername(), member.getPassword(), authorities); // UserDetail 인터페이스 사용시 이런 형식으로 User을 return하는 게 규칙
     }
+
+    // 테스트 데이터용 join
+    public Member join(String username, String password, String email) {
+        Member member = Member.builder()
+                .username(username)
+                .password(password)
+                .email(email)
+                .build();
+
+        memberRepository.save(member);
+
+        return member;
+    }
+
+    public long count() {
+        return memberRepository.count();
+    }
 }
