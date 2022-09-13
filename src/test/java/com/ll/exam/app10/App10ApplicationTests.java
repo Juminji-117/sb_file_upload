@@ -8,15 +8,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 
+import java.io.InputStream;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -106,5 +113,43 @@ class App10ApplicationTests {
 				.andExpect(status().is2xxSuccessful())
 				.andExpect(handler().handlerType(MemberController.class))
 				.andExpect(handler().methodName("showProfile"))
-				.andExpect(content().string(containsString("user4@test.com")));	}
+				.andExpect(content().string(containsString("user4@test.com")));
+	}
+
+	@Test
+	@DisplayName("회원가입")
+	void t5() throws Exception {
+		// 고객이 프로필 이미지 업로드
+		// application.yml에 지정한 폴더(C:\IntelliJ_uploadedfile_temp)에 member 폴더 생성 + 프로필 이미지 실제로 저장됨
+		String testUploadFileUrl = "https://picsum.photos/200/300";
+		String originalFileName = "test.png";
+
+		// wget
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Resource> response = restTemplate.getForEntity(testUploadFileUrl, Resource.class);
+		InputStream inputStream = response.getBody().getInputStream();
+
+		MockMultipartFile profileImg = new MockMultipartFile(
+				"profileImg",
+				originalFileName,
+				"image/png",
+				inputStream
+		);
+
+		// 회원가입(MVC MOCK)
+		// when
+		ResultActions resultActions = mvc.perform(
+						multipart("/member/join")
+								.file(profileImg)
+								.param("username", "user5")
+								.param("password", "1234")
+								.param("email", "user5@test.com")
+								.characterEncoding("UTF-8"))
+				.andDo(print());
+
+		// 5번회원이 생성되어야 함, 테스트
+		// 여기 마저 구현
+
+		// 5번회원의 프로필 이미지 제거
+	}
 }

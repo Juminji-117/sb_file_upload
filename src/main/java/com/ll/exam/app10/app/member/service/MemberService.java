@@ -34,19 +34,21 @@ public class MemberService implements UserDetailsService {
     public Member join(String username, String password, String email, MultipartFile profileImg) { // join == create
         // create할 때 이미지 처리 로직 시작
 
-        String profileImgRelPath = "member/" + UUID.randomUUID().toString() + ".png";
-        // 일관된경로+.png인 이미지 파일 새로 만듦
-        File profileImgFile = new File(genFileDirPath + "/" + profileImgRelPath);
-        // 관련된 폴더가 혹시나 없다면 만들어준다. (mkdirs는 File의 기본 제공 함수)
-        profileImgFile.mkdirs();
+        String profileImgDirName = "member";
+        String fileName = UUID.randomUUID().toString() + ".png";
+        String profileImgDirPath = genFileDirPath + "/" + profileImgDirName;
+        String profileImgFilePath = profileImgDirPath + "/" + fileName;
+
+        new File(profileImgDirPath).mkdirs(); // 폴더가 혹시나 없다면 만들어준다.
 
         try {
             // 입력받은 이미지를 아까 새로 만든 .png 이미지파일로 넘김김
-            profileImg.transferTo(profileImgFile);
+            profileImg.transferTo(new File(profileImgFilePath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        String profileImgRelPath = profileImgDirName + "/" + fileName;
         // 이미지 처리 로직 끝
 
         // builder 이용해서 set컬럼 말고 간단하게 멤버 저장
