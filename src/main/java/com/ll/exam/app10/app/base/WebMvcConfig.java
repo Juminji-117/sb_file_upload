@@ -12,7 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/gen-file/**") // 이렇게 요청이 들어오면 ex. http://localhost:8010/gen-file/1.png
+        registry.addResourceHandler("/gen/**") // 이렇게 요청이 들어오면 ex. http://localhost:8010/gen-file/1.png
                 .addResourceLocations("file:///" + genFileDirPath + "/"); // 파일을 이 경로(genFileDirPath)에서 찾는다
     }
 }

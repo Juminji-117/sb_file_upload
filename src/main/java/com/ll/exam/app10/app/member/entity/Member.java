@@ -32,4 +32,17 @@ public class Member extends BaseEntity { // id, date같은 중복 엔티티 칼�
     private String getProfileImgPath() {
         return AppConfig.GET_FILE_DIR_PATH + "/" + profileImg;
     }
+
+    public String getProfileImgUrl() {
+        if ( profileImg == null ) return null;
+
+        return "/gen/" + profileImg;
+
+        // /gen/** -> file:///genFileDirPath/
+        // WebMvcConfig.java
+        // @Override
+        //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        //        registry.addResourceHandler("/gen/**")
+        //                .addResourceLocations("file:///" + genFileDirPath + "/");
+    }
 }
