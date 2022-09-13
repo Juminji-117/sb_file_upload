@@ -33,7 +33,6 @@ public class MemberController {
 
     // HttpSession session를 인수로 넣으면 세션 바로 접근 가능
     @PostMapping("/join")
-    @ResponseBody
     public String join(HttpServletRequest req, String username, String password, String email, MultipartFile profileImg) {
         Member oldMember = memberService.getMemberByUsername(username);
 
