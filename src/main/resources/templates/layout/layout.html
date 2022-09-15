@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8"/>
+
+    <!-- 테일윈드와 부트스트랩을 같이 모아놓으면 충돌 일어나기 때문에 분리했음 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @font-face {
+            font-family: 'GmarketSansMedium';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        html > body {
+            font-family: "GmarketSansMedium";
+            text-underline-position: under;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- 아래에 있을 수록 적용 우선순위 높아짐 -> 테일윈드보다 부트스트랩이 우선 적용되게 하기 위해 body에 넣어줌 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css">
+
+<header>
+    <!-- container 클래스는 부트스트랩 기능 -> 안쪽 가운데로 내용을 모아줌 -->
+    <div class="container">
+        <a href="/">메인</a>
+        <a href="/member/login">로그인</a>
+        <a href="/member/join">회원가입</a>
+        <a href="/logout">로그아웃</a>
+        <a href="/member/profile">프로파일</a>
+    </div>
+</header>
+
+<section layout:fragment="content">
+    <div>내용</div>
+</section>
+
+<footer>
+
+</footer>
+
+</body>
+
+</html>
