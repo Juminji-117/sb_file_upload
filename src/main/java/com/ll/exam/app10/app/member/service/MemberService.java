@@ -2,6 +2,7 @@ package com.ll.exam.app10.app.member.service;
 
 import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.repository.MemberRepository;
+import com.ll.exam.app10.app.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,8 +35,11 @@ public class MemberService implements UserDetailsService {
     public Member join(String username, String password, String email, MultipartFile profileImg) { // join == create
         // create할 때 이미지 처리 로직 시작
 
-        String profileImgDirName = "member";
-        String fileName = UUID.randomUUID().toString() + ".png";
+        String profileImgDirName = "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd"); // 'member/날짜' 형태로 폴더 생성
+
+        String ext = Util.file.getExt(profileImg.getOriginalFilename()); // 사진파일 확장자 추출
+
+        String fileName = UUID.randomUUID() + "." + ext;
         String profileImgDirPath = genFileDirPath + "/" + profileImgDirName;
         String profileImgFilePath = profileImgDirPath + "/" + fileName;
 
