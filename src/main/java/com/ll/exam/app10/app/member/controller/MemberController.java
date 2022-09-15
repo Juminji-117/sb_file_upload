@@ -25,13 +25,14 @@ public class MemberController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
 
-
+    @PreAuthorize("isAnonymous()") // 비로그인 상태일 때만 여기로 접근
     @GetMapping("/join")
     public String showJoin() {
         return "member/join";
     }
 
     // HttpSession session를 인수로 넣으면 세션 바로 접근 가능
+    @PreAuthorize("isAnonymous()")
     @PostMapping("/join")
     public String join(HttpServletRequest req, String username, String password, String email, MultipartFile profileImg) {
         Member oldMember = memberService.getMemberByUsername(username);
@@ -54,6 +55,7 @@ public class MemberController {
         return "redirect:/member/profile";
     }
 
+    @PreAuthorize("isAnonymous()")
     @GetMapping("/login")
     public String showLogin() {
         return "member/login";

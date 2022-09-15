@@ -1,7 +1,8 @@
-package com.ll.exam.app10.app.base;
+package com.ll.exam.app10.app.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -10,6 +11,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+// @EnableGlobalMethodSecurity에는 securedEnabled, prePostEnabled, jsr250Enabled  3개의 속성이 있음
+// 이걸 어노테이션을 붙여야 @PreAuthorize, @RolesAllowed 등의 어노테이션 사용 가능
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -26,6 +30,9 @@ public class SecurityConfig {
                         formLogin -> formLogin
                                 .loginPage("/member/login") // GET
                                 .loginProcessingUrl("/member/login") // POST
+                )
+                                .logout(logout -> logout
+                                        .logoutUrl("/member/logout")
                 );
         return http.build();
     }

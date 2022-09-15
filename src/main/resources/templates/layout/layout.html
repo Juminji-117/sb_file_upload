@@ -33,10 +33,10 @@
     <!-- container 클래스는 부트스트랩 기능 -> 안쪽 가운데로 내용을 모아줌 -->
     <div class="container">
         <a href="/">메인</a>
-        <a href="/member/login">로그인</a>
-        <a href="/member/join">회원가입</a>
-        <a href="/logout">로그아웃</a>
-        <a href="/member/profile">프로파일</a>
+        <a href="/member/login" sec:authorize="isAnonymous()">로그인</a>
+        <a href="/member/join" sec:authorize="isAnonymous()">회원가입</a>
+        <a href="/member/logout" sec:authorize="isAuthenticated()">로그아웃</a>
+        <a href="/member/profile" sec:authorize="isAuthenticated()">프로파일</a>
     </div>
 </header>
 
