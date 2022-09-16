@@ -32,10 +32,14 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByUsername(username).orElse(null); // findByUsername -> Optional<Member>
     }
 
+    private String getCurrentProfileImgDirName() {
+        return "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd");
+    }
+
     public Member join(String username, String password, String email, MultipartFile profileImg) { // join == create
         // create할 때 이미지 처리 로직 시작
 
-        String profileImgDirName = "member/" + Util.date.getCurrentDateFormatted("yyyy_MM_dd"); // 'member/날짜' 형태로 폴더 생성
+        String profileImgDirName = getCurrentProfileImgDirName();
 
         String ext = Util.file.getExt(profileImg.getOriginalFilename()); // 사진파일 확장자 추출
 
@@ -103,6 +107,14 @@ public class MemberService implements UserDetailsService {
         member.removeProfileImgOnStorage(); // 파일삭제
         member.setProfileImg(null);
 
+        memberRepository.save(member);
+    }
+
+    public void setProfileImgByUrl(Member member, String url) {
+        // 일단 URL형태로 이미지를 받은 후에(확장자 정보 없이), downloadImg 메서드로 확장자 정보까지 붙여서 rename해줌
+        // 내가 application.yml에 지정한 genFileDirPath(C:\IntelliJ_uploadedfile_temp) 아래 member/날짜 폴더 아래 이미지 저장됨
+        String filePath = Util.file.downloadImg(url, genFileDirPath + "/" + getCurrentProfileImgDirName() + "/" + UUID.randomUUID());
+        member.setProfileImg(getCurrentProfileImgDirName() + "/" + new File(filePath).getName());
         memberRepository.save(member);
     }
 }
