@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8"/>
 
-    <!-- 테일윈드와 부트스트랩을 같이 모아놓으면 충돌 일어나기 때문에 분리했음 -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -24,21 +23,34 @@
 
 <body>
 
-<!-- 아래에 있을 수록 적용 우선순위 높아짐 -> 테일윈드보다 부트스트랩이 우선 적용되게 하기 위해 body에 넣어줌 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css">
 
 <header>
-    <!-- container 클래스는 부트스트랩 기능 -> 안쪽 가운데로 내용을 모아줌 -->
     <div class="container">
         <a href="/">메인</a>
+        <a href="/about">어바웃</a>
         <a href="/member/login" sec:authorize="isAnonymous()">로그인</a>
         <a href="/member/join" sec:authorize="isAnonymous()">회원가입</a>
         <a href="/member/logout" sec:authorize="isAuthenticated()">로그아웃</a>
         <a href="/member/profile" sec:authorize="isAuthenticated()">프로파일</a>
     </div>
+
+    <hr>
+
+    <div class="container">
+        <header th:if="${loginedMember != null}" class="flex items-center gap-2">
+            <img class="w-10 h-10 object-cover rounded" th:src="@{${loginedMemberProfileImgUrl}}" alt="">
+
+            <div th:text="|${loginedMember.username}님 환영합니다.|">
+
+            </div>
+        </header>
+    </div>
 </header>
+
+<hr>
 
 <section layout:fragment="content">
     <div>내용</div>
