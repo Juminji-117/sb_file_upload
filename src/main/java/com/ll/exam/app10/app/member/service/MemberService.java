@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService implements UserDetailsService {
+public class MemberService {
     @Value("${custom.genFileDirPath}")
     private String genFileDirPath;
 
@@ -76,15 +75,6 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // UserDetail 인터페이스 오버라이드
-        Member member = memberRepository.findByUsername(username).get();
-
-        List<GrantedAuthority> authorities = new ArrayList<>(); // GrantedAuthority 인터페이스
-        authorities.add(new SimpleGrantedAuthority("member")); // SimpleGrantedAuthority 인터페이스
-
-        return new User(member.getUsername(), member.getPassword(), authorities); // UserDetail 인터페이스 사용시 이런 형식으로 User을 return하는 게 규칙
-    }
 
     // 테스트 데이터용 join
     public Member join(String username, String password, String email) {
