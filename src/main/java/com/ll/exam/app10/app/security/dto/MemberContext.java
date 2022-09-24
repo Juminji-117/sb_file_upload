@@ -12,11 +12,14 @@ import java.util.List;
 // MemberContext 클래스를 새로 만들어 User 클래스를 상속받은 후 id와 profileImgUrl도 추가(스프링 시큐리티 기본 제공X)
 public class MemberContext extends User {
     private final Long id;
+    private final String email;
     private final String profileImgUrl;
 
+
     public MemberContext(Member member, List<GrantedAuthority> authorities) {
-        super(member.getUsername(), member.getPassword(), authorities);
+        super(member.getUsername(), member.getPassword(), authorities); // super로 부모클래스 호출
         this.id = member.getId();
+        this.email = member.getEmail();
         this.profileImgUrl = member.getProfileImgUrl();
     }
 }
