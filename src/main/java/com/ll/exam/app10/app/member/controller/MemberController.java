@@ -3,6 +3,10 @@ package com.ll.exam.app10.app.member.controller;
 import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,6 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequiredArgsConstructor
@@ -64,9 +71,15 @@ public class MemberController {
         return "member/profile";
     }
 
+    // 이미지 렌더링 -> 웹 브라우저 캐시 설정
+    // 302 캐시 붙이기로 검색해서 copy
     @GetMapping("/profile/img/{id}")
-    public String showProfileImg(@PathVariable Long id) {
-        return "redirect:" + memberService.getMemberById(id).getProfileImgUrl();
+    public ResponseEntity<Object> showProfileImg(@PathVariable Long id) throws URISyntaxException {
+        URI redirectUri = new URI(memberService.getMemberById(id).getProfileImgUrl());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(redirectUri);
+        httpHeaders.setCacheControl(CacheControl.maxAge(60 * 60 * 1, TimeUnit.SECONDS)); // 캐시 유효기간 1시간
+        return new ResponseEntity<>(httpHeaders, HttpStatus.FOUND);
     }
 }
 
